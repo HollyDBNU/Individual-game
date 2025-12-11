@@ -165,34 +165,42 @@ class MysteryShip(pygame.sprite.Sprite):
             self.kill()
 
 # ---------- Block / Obstacles (green shields) ----------
-CELL_SIZE = 6
+CELL_SIZE = 4
 class Block(pygame.sprite.Sprite):
-    def __init__(self, x, y, color=(0, 220, 0)):
+    def __init__(self, x, y):
         super().__init__()
         self.image = pygame.Surface((CELL_SIZE, CELL_SIZE))
-        self.image.fill(color)
+        self.image.fill((0, 220, 0))   # Green bunkers
         self.rect = self.image.get_rect(topleft=(x, y))
 
 # simple shield grid used to produce shield shapes (works like your original grid but scaled)
-shield_grid = [
-    [0,0,1,1,1,1,1,0,0],
-    [0,1,1,1,1,1,1,1,0],
-    [1,1,1,1,1,1,1,1,1],
-    [1,1,1,1,1,1,1,1,1],
-    [1,1,1,1,1,1,1,1,1],
-    [1,1,1,1,1,1,1,1,1],
+
+big_grid = [
+[0,0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0,0,0],
+[0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0,0],
+[0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0],
+[0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0],
+[1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
+[1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
+[1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
+[1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
+[1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
+[1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
+[1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1],
+[1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1],
+[1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1]
 ]
 
 class Shield:
     def __init__(self, x, y):
         self.blocks = pygame.sprite.Group()
-        for r in range(len(shield_grid)):
-            for c in range(len(shield_grid[0])):
-                if shield_grid[r][c] == 1:
+        for r in range(len(big_grid)):
+            for c in range(len(big_grid[0])):
+                if big_grid[r][c] == 1:
                     bx = x + c * CELL_SIZE
                     by = y + r * CELL_SIZE
-                    b = Block(bx, by, color=(0, 220, 0))
-                    self.blocks.add(b)
+                    block = Block(bx, by)
+                    self.blocks.add(block)
 
 # ---------- Alien ----------
 class Alien(pygame.sprite.Sprite):
@@ -266,11 +274,11 @@ class Game:
     def create_shields(self):
         # place four shields mid-bottom, above player
         shield_count = 4
-        total_width = shield_count * (len(shield_grid[0]) * CELL_SIZE) + (shield_count-1)*40
+        total_width = shield_count * (len(big_grid[0]) * CELL_SIZE) + (shield_count-1)*40
         start_x = (self.screen_w - total_width) // 2
         y = self.screen_h - 180  # mid-bottom area
         for i in range(shield_count):
-            x = start_x + i * ((len(shield_grid[0]) * CELL_SIZE) + 40)
+            x = start_x + i * ((len(big_grid[0]) * CELL_SIZE) + 40)
             s = Shield(x, y)
             self.shields.append(s)
             self.all_shield_blocks.add(*s.blocks.sprites())
@@ -406,4 +414,3 @@ while True:
     pygame.display.flip()
     clock.tick(60)
 
-    
