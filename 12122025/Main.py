@@ -4,7 +4,7 @@ import random
 import pygame
 import sys
 
-# ---------- Config / Asset helpers ----------
+# configuration
 ASSET_DIR = "Graphics"  # folder where your assets live
 
 def asset_path(name):
@@ -31,7 +31,7 @@ def load_sound_try(choices):
                 continue
     return None
 
-# ---------- Pygame init ----------
+# Pygame init 
 pygame.init()
 try:
     pygame.mixer.init()
@@ -39,21 +39,22 @@ except Exception:
     pass
 
 SCREEN_W, SCREEN_H = 600, 700
+
 screen = pygame.display.set_mode((SCREEN_W, SCREEN_H))
 pygame.display.set_caption("Space Invaders - Holly's Version")
 clock = pygame.time.Clock()
-FONT = pygame.font.Font(None, 24)
+FONT = pygame.font.Font("Graphics/monogram.ttf", 24)
 
-# ---------- Events ----------
+# Events 
 MYSTERYSHIP = pygame.USEREVENT + 1
 ALIEN_FIRE_EVENT = pygame.USEREVENT + 2
 
-# mystery ship interval (reset each spawn)
+# mystery ship interval
 pygame.time.set_timer(MYSTERYSHIP, random.randint(4000, 8000))
 # alien firing timer (aliens attempt to fire every 600ms)
 pygame.time.set_timer(ALIEN_FIRE_EVENT, 600)
 
-# ---------- Base Laser classes ----------
+# Base Laser 
 class Laser(pygame.sprite.Sprite):
     def __init__(self, pos, speed, color=(243,216,63)):
         super().__init__()
@@ -78,7 +79,7 @@ class AlienLaser(Laser):
         if self.rect.top > SCREEN_H:
             self.kill()
 
-# ---------- Player spaceship ----------
+# Player spaceship
 class Spaceship(pygame.sprite.Sprite):
     def __init__(self, screen_w, screen_h, offset=10):
         super().__init__()
@@ -143,7 +144,7 @@ class Spaceship(pygame.sprite.Sprite):
         self.laser_ready = True
         self.laser_time = 0
 
-# ---------- Mystery Ship ----------
+# Mystery Ship 
 class MysteryShip(pygame.sprite.Sprite):
     def __init__(self, screen_w, y_offset=40, speed=-3):
         super().__init__()
@@ -164,7 +165,7 @@ class MysteryShip(pygame.sprite.Sprite):
         if self.rect.right < -10 or self.rect.left > self.screen_w + 50:
             self.kill()
 
-# ---------- Block / Obstacles (green shields) ----------
+# Block / Obstacles
 CELL_SIZE = 4
 class Block(pygame.sprite.Sprite):
     def __init__(self, x, y):
@@ -173,7 +174,7 @@ class Block(pygame.sprite.Sprite):
         self.image.fill((0, 220, 0))   # Green bunkers
         self.rect = self.image.get_rect(topleft=(x, y))
 
-# simple shield grid used to produce shield shapes (works like your original grid but scaled)
+# simple grid
 
 big_grid = [
 [0,0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0,0,0],
@@ -202,7 +203,7 @@ class Shield:
                     block = Block(bx, by)
                     self.blocks.add(block)
 
-# ---------- Alien ----------
+# Alien
 class Alien(pygame.sprite.Sprite):
     def __init__(self, x, y, color_name="green"):
         super().__init__()
@@ -216,7 +217,6 @@ class Alien(pygame.sprite.Sprite):
         if img:
             self.image = img
         else:
-            # fallback pixel-art rectangle
             surf = pygame.Surface((36, 28))
             surf.fill((200, 50, 50) if color_name == "red" else (200,200,50) if color_name=="yellow" else (50,200,50))
             self.image = surf
@@ -227,7 +227,7 @@ class Alien(pygame.sprite.Sprite):
         # In this simplified demo aliens are stationary horizontally (single row)
         pass
 
-# ---------- Game wrapper ----------
+# Game wrapper
 class Game:
     def __init__(self, screen):
         self.screen = screen
@@ -383,7 +383,7 @@ class Game:
         self.update()
         self.draw()
 
-# ---------- Main loop ----------
+# Main loop 
 game = Game(screen)
 
 while True:
@@ -413,4 +413,5 @@ while True:
     game.run_frame()
     pygame.display.flip()
     clock.tick(60)
+
 
